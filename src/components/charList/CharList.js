@@ -39,7 +39,11 @@ class CharList extends Component {
     return (
       <ul className="char__grid">
         {arr.map((item) => (
-          <li className="char__item" key={item.id}>
+          <li
+            className="char__item"
+            key={item.id}
+            onClick={() => this.props.onCharSelected(item.id)}
+          >
             <img src={item.thumbnail} alt={item.name} />
             <div className="char__name">{item.name}</div>
           </li>
