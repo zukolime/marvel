@@ -1,5 +1,6 @@
 class MarvelServices {
   _apiBase = "https://marvel-server-zeta.vercel.app/";
+  _baseOffset = 0;
 
   getResource = async (url) => {
     let res = await fetch(url);
@@ -11,9 +12,9 @@ class MarvelServices {
     return res.json();
   };
 
-  getAllCharacters = async () => {
+  getAllCharacters = async (offset = this._baseOffset) => {
     const res = await this.getResource(
-      `${this._apiBase}characters?limit=9&${process.env.REACT_APP_API_KEY}`
+      `${this._apiBase}characters?limit=9&offset=${offset}&${process.env.REACT_APP_API_KEY}`
     );
     return res.data.results.map(this._transformChar);
   };
