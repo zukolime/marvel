@@ -115,7 +115,6 @@ const View = ({ char }) => {
 
 CharInfo.propTypes = {
   charId: PropTypes.number,
-  onCharSelected: PropTypes.func.isRequired,
 };
 
 export default CharInfo;
