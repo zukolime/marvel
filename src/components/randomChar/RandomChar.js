@@ -1,4 +1,4 @@
-import { Component } from "react";
+import { useState, useEffect } from "react";
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import MarvelService from "../../services/MarvelService";
@@ -6,85 +6,77 @@ import MarvelService from "../../services/MarvelService";
 import "./randomChar.scss";
 import mjolnir from "../../resources/img/mjolnir.png";
 
-class RandomChar extends Component {
-  state = {
-    char: {},
-    loading: true,
-    error: false,
+const RandomChar = () => {
+  const [char, setChar] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const errorMessage = error ? <ErrorMessage /> : null;
+  const spinner = loading ? <Spinner /> : null;
+  const content = !(loading || error) ? (
+    <View char={char} hasDescription={hasDescription} />
+  ) : null;
+
+  const marvelService = new MarvelService();
+
+  useEffect(() => {
+    updateChar();
+  }, []);
+
+  const onCharLoading = () => {
+    setLoading(true);
   };
 
-  marvelService = new MarvelService();
-
-  componentDidMount() {
-    this.updateChar();
-  }
-
-  onCharLoading = () => {
-    this.setState({
-      loading: true,
-    });
+  const onCharLoaded = (char) => {
+    setChar(char);
+    setLoading(false);
   };
 
-  onCharLoaded = (char) => {
-    this.setState({ char, loading: false });
+  const onError = () => {
+    setLoading(false);
+    setError(true);
   };
 
-  onError = () => {
-    this.setState({ loading: false, error: true });
-  };
-
-  updateChar = () => {
+  const updateChar = () => {
     const id = Math.floor(Math.random() * 20) + 1;
-    this.onCharLoading();
-    this.marvelService
-      .getCharacter(id)
-      .then(this.onCharLoaded)
-      .catch(this.onError);
+    onCharLoading();
+    marvelService.getCharacter(id).then(onCharLoaded).catch(onError);
   };
 
-  hasDescription = (description) => {
+  function hasDescription(description) {
     if (description === undefined) {
       return null;
     }
 
     if (!description) {
-      return "No description";
+      return "There is no description for this character";
     }
 
     return description.length >= 200
       ? description.slice(0, 200) + "..."
       : description;
-  };
-
-  render() {
-    const { char, loading, error } = this.state;
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error) ? (
-      <View char={char} hasDescription={this.hasDescription} />
-    ) : null;
-
-    return (
-      <div className="randomchar">
-        {errorMessage}
-        {spinner}
-        {content}
-        <div className="randomchar__static">
-          <p className="randomchar__title">
-            Random character for today!
-            <br />
-            Do you want to get to know him better?
-          </p>
-          <p className="randomchar__title">Or choose another one</p>
-          <button onClick={this.updateChar} className="button button__main">
-            <div className="inner">try it</div>
-          </button>
-          <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
-        </div>
-      </div>
-    );
   }
-}
+
+  return (
+    <div className="randomchar">
+      {errorMessage}
+      {spinner}
+      {content}
+      <div className="randomchar__static">
+        <p className="randomchar__title">
+          Random character for today!
+          <br />
+          Do you want to get to know him better?
+        </p>
+        <p className="randomchar__title">Or choose another one</p>
+        <button onClick={updateChar} className="button button__main">
+          <div className="inner">try it</div>
+        </button>
+        <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
+      </div>
+    </div>
+  );
+};
 
 const View = ({ char, hasDescription }) => {
   const { name, description, thumbnail, homepage, wiki } = char;
