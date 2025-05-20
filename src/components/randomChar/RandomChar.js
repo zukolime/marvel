@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
-import MarvelService from "../../services/MarvelService";
+import useMarvelService from "../../services/MarvelService";
 
 import "./randomChar.scss";
 import mjolnir from "../../resources/img/mjolnir.png";
 
 const RandomChar = () => {
   const [char, setChar] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const { loading, error, getCharacter, clearError } = useMarvelService();
 
   const errorMessage = error ? <ErrorMessage /> : null;
   const spinner = loading ? <Spinner /> : null;
@@ -17,30 +16,23 @@ const RandomChar = () => {
     <View char={char} hasDescription={hasDescription} />
   ) : null;
 
-  const marvelService = new MarvelService();
-
   useEffect(() => {
     updateChar();
-  }, []);
+    const timerId = setInterval(updateChar, 60000);
 
-  const onCharLoading = () => {
-    setLoading(true);
-  };
+    return () => {
+      clearInterval(timerId);
+    };
+  }, []);
 
   const onCharLoaded = (char) => {
     setChar(char);
-    setLoading(false);
-  };
-
-  const onError = () => {
-    setLoading(false);
-    setError(true);
   };
 
   const updateChar = () => {
+    clearError();
     const id = Math.floor(Math.random() * 20) + 1;
-    onCharLoading();
-    marvelService.getCharacter(id).then(onCharLoaded).catch(onError);
+    getCharacter(id).then(onCharLoaded);
   };
 
   function hasDescription(description) {
