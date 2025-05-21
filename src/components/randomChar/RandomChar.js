@@ -12,9 +12,7 @@ const RandomChar = () => {
 
   const errorMessage = error ? <ErrorMessage /> : null;
   const spinner = loading ? <Spinner /> : null;
-  const content = !(loading || error) ? (
-    <View char={char} hasDescription={hasDescription} />
-  ) : null;
+  const content = !(loading || error) ? <View char={char} /> : null;
 
   useEffect(() => {
     updateChar();
@@ -34,20 +32,6 @@ const RandomChar = () => {
     const id = Math.floor(Math.random() * 20) + 1;
     getCharacter(id).then(onCharLoaded);
   };
-
-  function hasDescription(description) {
-    if (description === undefined) {
-      return null;
-    }
-
-    if (!description) {
-      return "There is no description for this character";
-    }
-
-    return description.length >= 200
-      ? description.slice(0, 200) + "..."
-      : description;
-  }
 
   return (
     <div className="randomchar">
@@ -70,9 +54,8 @@ const RandomChar = () => {
   );
 };
 
-const View = ({ char, hasDescription }) => {
+const View = ({ char }) => {
   const { name, description, thumbnail, homepage, wiki } = char;
-  const descrText = hasDescription(description);
   const noImg =
     "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg";
 
@@ -89,7 +72,7 @@ const View = ({ char, hasDescription }) => {
       />
       <div className="randomchar__info">
         <p className="randomchar__name">{name}</p>
-        <p className="randomchar__descr">{descrText}</p>
+        <p className="randomchar__descr">{description}</p>
         <div className="randomchar__btns">
           <a href={homepage} className="button button__main">
             <div className="inner">homepage</div>
