@@ -6,6 +6,16 @@ const useMarvelServices = () => {
   const _apiBase = "https://marvel-server-zeta.vercel.app/";
   const _baseOffset = 0;
 
+  const getCharacterByName = async (name) => {
+    const lowerName = name.toLowerCase();
+    const res = await request(
+      `${_apiBase}characters?nameStartsWith=${name}&${process.env.REACT_APP_API_KEY}`
+    );
+    return res.data.results
+      .filter((char) => char.name.toLowerCase() === lowerName)
+      .map(_transformChar);
+  };
+
   const getAllCharacters = async (offset = _baseOffset) => {
     const res = await request(
       `${_apiBase}characters?limit=9&offset=${offset}&${process.env.REACT_APP_API_KEY}`
@@ -64,6 +74,7 @@ const useMarvelServices = () => {
     loading,
     error,
     clearError,
+    getCharacterByName,
     getAllCharacters,
     getCharacter,
     getAllComics,
