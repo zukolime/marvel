@@ -7,7 +7,7 @@
 - React 18
 - React Router v6 — навигация между страницами
 - Formik + Yup — обработка формы и ее валидация
-- Sass (SCSS) — стилизация
+- SCSS — стилизация
 - React Helmet — управление мета-информацией
 - Marvel API
 
